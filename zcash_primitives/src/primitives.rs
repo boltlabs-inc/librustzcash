@@ -19,7 +19,8 @@ use jubjub::{
     JubjubParams,
     edwards,
     PrimeOrder,
-    FixedGenerators
+    FixedGenerators,
+    Unknown,
 };
 
 use blake2s_simd::Params as Blake2sParams;
@@ -146,6 +147,29 @@ impl<E: JubjubEngine> PartialEq for PaymentAddress<E> {
 }
 
 impl<E: JubjubEngine> PaymentAddress<E> {
+    pub fn from_bytes(
+        bytes: &[u8; 43],
+        params: &E::Params,
+    ) -> Option<Self> {
+        let diversifier = {
+            let mut tmp = [0; 11];
+            tmp.copy_from_slice(&bytes[0..11]);
+            Diversifier(tmp)
+        };
+
+        let pk_d = match edwards::Point::<E, Unknown>::read(&bytes[11..43], params) {
+            Ok(p) => p,
+            Err(_) => return None,
+        };
+
+        let pk_d = match pk_d.as_prime_order(params) {
+            Some(p) => p,
+            None => return None,
+        };
+
+        Some(PaymentAddress { pk_d, diversifier })
+    }
+
     pub fn g_d(
         &self,
         params: &E::Params
