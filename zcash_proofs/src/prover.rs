@@ -109,6 +109,16 @@ impl LocalTxProver {
 
         Some(LocalTxProver::new(&spend_path, &output_path))
     }
+
+    #[cfg(test)]
+    pub(crate) fn spend_params(&self) -> &Parameters<Bls12> {
+        &self.spend_params
+    }
+
+    #[cfg(test)]
+    pub(crate) fn spend_vk(&self) -> &PreparedVerifyingKey<Bls12> {
+        &self.spend_vk
+    }
 }
 
 impl TxProver for LocalTxProver {
