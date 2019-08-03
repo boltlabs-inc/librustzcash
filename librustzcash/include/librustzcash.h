@@ -308,6 +308,21 @@ extern "C" {
         unsigned char *j_ret,
         unsigned char *addr_ret
     );
+
+    bool librustzcash_zip304_signmessage(
+        const unsigned char *extsk,
+        const unsigned char *address,
+        uint32_t coin_type,
+        const char* message,
+        unsigned char *signature
+    );
+
+    bool librustzcash_zip304_verifymessage(
+        const unsigned char *address,
+        uint32_t coin_type,
+        const char *message,
+        const unsigned char *signature
+    );
 }
 
 #endif // LIBRUSTZCASH_INCLUDE_H_
